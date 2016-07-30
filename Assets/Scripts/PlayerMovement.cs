@@ -7,6 +7,8 @@ public class PlayerMovement : MonoBehaviour {
     Camera cam; //Scene camera
     LineRenderer lineRenderer; //Line renderer
     Vector2 mousePosition; //Mouse position (world space)
+    bool canJump; //If the player is able to jump
+    float mouseAngle; //Angle between player and mouse
     public GameObject probe, probeOrigin; //Probe to check forward collisions
     public float playerLength, playerWidth; //Player dimensions
     public float playerSpeed = 150f; //Player's speed
@@ -17,6 +19,7 @@ public class PlayerMovement : MonoBehaviour {
     void Start()
     {
         //Gets object references
+        canJump = false;
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         lineRenderer = GetComponent<LineRenderer>();
         state = State.STATIONARY;
@@ -24,12 +27,9 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
-        Debug.DrawRay(transform.position, transform.up, Color.green, 0, false);
-        Debug.DrawRay(transform.position, -transform.up, Color.red, 0, false);
-
-        mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        ManageInput();
+        UpdateMousePosition();
         UpdateLineRenderer();
+        ManageInput();
     }
 
     void LateUpdate()
@@ -37,6 +37,15 @@ public class PlayerMovement : MonoBehaviour {
         ManageMovement();
     }
 
+    void UpdateMousePosition()
+    {
+        mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
+        mouseAngle = Vector2.Angle(mousePosition - (Vector2)transform.position, -transform.up);
+        RaycastHit2D canJumpHit = GetClosestRaycastHit2D("CollisionObject", transform.position, mousePosition - (Vector2)transform.position, 2 * playerLength);
+        canJump = canJumpHit.transform.gameObject.CompareTag("Player") ? true : false;
+        Debug.Log("Angle: " + mouseAngle + ", Distance: " + canJumpHit.distance + ", Name: " + canJumpHit.transform.gameObject.name);
+    }
+    
     void ManageMovement()
     {
         switch (state)
@@ -47,6 +56,7 @@ public class PlayerMovement : MonoBehaviour {
                     EnableLineRenderer();
                 break;
             case State.MOVING:
+                //Disabled line renderer
                 if (lineRenderer.enabled)
                     DisableLineRenderer();
 
@@ -85,10 +95,18 @@ public class PlayerMovement : MonoBehaviour {
                 //Left click - Jump
                 if (Input.GetMouseButtonDown(0))
                 {
-                    //Update state
-                    state = State.MOVING;
-                    //Get angle
-                    transform.eulerAngles = transform.eulerAngles.x < mousePosition.x - transform.position.x ? new Vector3(0, 0, 360 - Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up)) : new Vector3(0, 0, Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up));
+                    //If jump angle is okay
+                    if(canJump)
+                    {
+                        //Update state
+                        state = State.MOVING;
+                        //Get angle
+                        transform.eulerAngles = transform.eulerAngles.x < mousePosition.x - transform.position.x ? new Vector3(0, 0, 360 - Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up)) : new Vector3(0, 0, Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up));
+                    }
+                    else
+                    {
+                        Debug.Log("Movement Error: Mouse angle less than 80 degrees!");
+                    }
                 }
                 break;
             case State.MOVING:
@@ -112,26 +130,18 @@ public class PlayerMovement : MonoBehaviour {
     void StopCharacterMovement()
     {
         //Get collision point
-        RaycastHit2D[] rayHits = Physics2D.RaycastAll(transform.position, transform.up, 2.4f);
-        RaycastHit2D rayHit = SortRaycastHit2D("CollisionObject", rayHits);
-
-        //Debug to check if the collision failed or succeeded
-        if (rayHit.distance <= 0)
-        {
-            //Failed Collision - Needs extra handling
-            Debug.Log("BAD COLLISION! Calling RaycastCircle();");
-
-            //Get new closest point
-            rayHit = RaycastCircle("CollisionObject", transform.position, 360, 2.4f);
-        }
+        RaycastHit2D rayHit = RaycastCircle("CollisionObject", transform.position, 360, 2f);
 
         //Set state
         state = State.STATIONARY;
 
+        //Set first position to line up planes
+        transform.position = rayHit.point;
+
         //Set rotation
         transform.rotation = Quaternion.FromToRotation(Vector3.up, rayHit.normal);
 
-        //Set position
+        //Set final position
         RaycastHit2D closestBackHit = GetClosestRaycastHit2D("CollisionObject", transform.position, -transform.up, 2f);
         float moveDistance = (playerLength / 2) - closestBackHit.distance;
         transform.Translate(Vector2.up * moveDistance);
@@ -210,6 +220,23 @@ public class PlayerMovement : MonoBehaviour {
     //Updates the line renderer
     void UpdateLineRenderer()
     {
+        Color c1;
+        Color c2;
+
+        if (canJump)
+        {
+            //Able to jump
+            c1 = Color.blue;
+            c2 = Color.blue;
+        }
+        else
+        {
+            //Unable to jump
+            c1 = Color.red;
+            c2 = Color.red;
+        }
+
+        lineRenderer.SetColors(c1, c2);
         lineRenderer.SetPositions(new Vector3[] {transform.position, mousePosition});
     }
 
