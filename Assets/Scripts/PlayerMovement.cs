@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -62,16 +63,15 @@ public class PlayerMovement : MonoBehaviour {
                 //Check if player will collide with object
                 RaycastHit2D forwardCollisionHit = GetClosestRaycastHit2D("CollisionObject", probeOrigin.transform.position, transform.up, probeDistance);
 
+                //If player collides with object, correct their position
                 if(forwardCollisionHit)
                 {
                     if (forwardCollisionHit.transform.gameObject.tag != "Player")
                     {
-                        Debug.Log("Collision Object Detected!");
                         state = State.STATIONARY;
                         transform.Translate(Vector2.up * forwardCollisionHit.distance);
                     }
                 }
-                Debug.DrawRay(probeOrigin.transform.position, transform.up * probeDistance, Color.yellow, 1 * Time.deltaTime, false);
                 break;
         }
     }
@@ -111,24 +111,22 @@ public class PlayerMovement : MonoBehaviour {
 
     void StopCharacterMovement()
     {
+        //Get collision point
+        RaycastHit2D[] rayHits = Physics2D.RaycastAll(transform.position, transform.up, 2.4f);
+        RaycastHit2D rayHit = SortRaycastHit2D("CollisionObject", rayHits);
+
+        //Debug to check if the collision failed or succeeded
+        if (rayHit.distance <= 0)
+        {
+            //Failed Collision - Needs extra handling
+            Debug.Log("BAD COLLISION! Calling RaycastCircle();");
+
+            //Get new closest point
+            rayHit = RaycastCircle("CollisionObject", transform.position, 360, 2.4f);
+        }
+
         //Set state
         state = State.STATIONARY;
-
-        //Get collision point
-        RaycastHit2D[] rayHits = Physics2D.CircleCastAll(transform.position, 0.1f, transform.up, 2.3f);
-        RaycastHit2D rayHit = rayHits.Length > 1 ? rayHits[1] : rayHits[0];
-
-        //Debug to check if the collision is good or bad
-        if (rayHit.distance > 0)
-        {
-            Debug.Log("GOOD COLLISION!");
-        }
-        else
-        {
-            Debug.Log("BAD COLLISION!");
-        }
-
-        Debug.Log("\n\n");
 
         //Set rotation
         transform.rotation = Quaternion.FromToRotation(Vector3.up, rayHit.normal);
@@ -139,16 +137,13 @@ public class PlayerMovement : MonoBehaviour {
         transform.Translate(Vector2.up * moveDistance);
     }
 
-    //Gets closest Raycast2D
-    RaycastHit2D GetClosestRaycastHit2D(string compareTag, Vector2 origin, Vector2 direction, float distance = Mathf.Infinity, int layerMask = Physics2D.DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity)
+    //Sorts Raycast2D array to get closest Raycast2D
+    RaycastHit2D SortRaycastHit2D(string compareTag, RaycastHit2D[] hits)
     {
-        RaycastHit2D[] hits = Physics2D.RaycastAll(origin, direction, distance, layerMask, minDepth, maxDepth);
-
-        if(hits.Length > 0)
+        if (hits.Length > 0)
         {
             RaycastHit2D closestHit = hits[0];
             float closestBackDistance = int.MaxValue;
-
             foreach (RaycastHit2D hit in hits)
             {
                 if (compareTag != null)
@@ -156,6 +151,7 @@ public class PlayerMovement : MonoBehaviour {
                     if (hit.collider.gameObject.CompareTag(compareTag) && (closestBackDistance > hit.distance))
                     {
                         closestHit = hit;
+                        closestBackDistance = hit.distance;
                     }
                 }
                 else
@@ -163,12 +159,52 @@ public class PlayerMovement : MonoBehaviour {
                     if (closestBackDistance > hit.distance)
                     {
                         closestHit = hit;
+                        closestBackDistance = hit.distance;
                     }
                 }
             }
             return closestHit;
         }
         return new RaycastHit2D();
+    }
+
+    //Gets 360 Raycast
+    RaycastHit2D RaycastCircle(string compareTag, Vector2 origin, int segments = 360, float radius = Mathf.Infinity)
+    {
+        List<RaycastHit2D> rayHitsList = new List<RaycastHit2D>();
+
+        for(int i = 0; i < segments; i++)
+        {
+            float angle = (360 / segments) * i;
+            Vector2 dir = Quaternion.Euler(0, 0, angle) * Vector2.up;
+            RaycastHit2D rayHit = GetClosestRaycastHit2D(compareTag, origin, dir, radius);
+            if(rayHit.transform.gameObject.CompareTag(compareTag))
+            {
+                rayHitsList.Add(rayHit);
+            }
+            
+            //Pretty Rainbow Debug Method! :D
+            /*
+            if(i == 0)
+            {
+                Debug.DrawRay(origin, dir * 100, Color.HSVToRGB(0, 1, 1), 10, false);
+            }
+            else
+            {
+                Debug.DrawRay(origin, dir * 100, Color.HSVToRGB((float)i / (float)segments, 1, 1), 10, false);
+            }
+            */
+        }
+
+        RaycastHit2D[] rayHitsArray = rayHitsList.ToArray();
+        return SortRaycastHit2D(compareTag, rayHitsArray);
+    }
+
+    //Gets closest Raycast2D
+    RaycastHit2D GetClosestRaycastHit2D(string compareTag, Vector2 origin, Vector2 direction, float distance = Mathf.Infinity, int layerMask = Physics2D.DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity)
+    {
+        RaycastHit2D[] hits = Physics2D.RaycastAll(origin, direction, distance, layerMask, minDepth, maxDepth);
+        return SortRaycastHit2D(compareTag, hits);
     }
 
     //Updates the line renderer

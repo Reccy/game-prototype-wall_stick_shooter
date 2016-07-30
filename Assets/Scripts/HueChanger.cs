@@ -3,13 +3,22 @@ using System.Collections;
 
 public class HueChanger : MonoBehaviour {
 
-    SpriteRenderer sprRenderer;
+    GameObject targetObject;
+    SpriteRenderer spriteRenderer;
     int colorHue;
     Color newColor;
 
     void Start() 
     {
-        sprRenderer = GetComponent<SpriteRenderer>();
+        try
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+        catch
+        {
+            Debug.LogError("No sprite renderer attached.");
+        }
+        
     }
 
 	void Update(){
@@ -20,6 +29,10 @@ public class HueChanger : MonoBehaviour {
         }
 
         newColor = Color.HSVToRGB(colorHue/360f, 1, 1);
-        sprRenderer.color = newColor;
+        
+        if(spriteRenderer != null)
+        {
+            spriteRenderer.color = newColor;
+        }
 	}
 }
