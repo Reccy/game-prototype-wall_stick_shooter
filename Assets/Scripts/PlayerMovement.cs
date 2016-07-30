@@ -6,7 +6,8 @@ public class PlayerMovement : MonoBehaviour {
     Camera cam; //Scene camera
     LineRenderer lineRenderer; //Line renderer
     Vector2 mousePosition; //Mouse position (world space)
-    public float playerLength, playerWidth;
+    public GameObject probe, probeOrigin; //Probe to check forward collisions
+    public float playerLength, playerWidth; //Player dimensions
     public float playerSpeed = 150f; //Player's speed
 
     enum State {STATIONARY, MOVING};
@@ -50,6 +51,27 @@ public class PlayerMovement : MonoBehaviour {
 
                 //Move forward
                 transform.Translate(Vector2.up * playerSpeed * Time.deltaTime);
+
+                //Moves probe forward
+                probe.transform.position = probeOrigin.transform.position;
+                probe.transform.Translate(Vector2.up * playerSpeed * Time.deltaTime);
+
+                //Distance between probes (Movement distance this frame)
+                float probeDistance = Mathf.Abs(Vector2.Distance(probeOrigin.transform.position, probe.transform.position));
+
+                //Check if player will collide with object
+                RaycastHit2D forwardCollisionHit = GetClosestRaycastHit2D("CollisionObject", probeOrigin.transform.position, transform.up, probeDistance);
+
+                if(forwardCollisionHit)
+                {
+                    if (forwardCollisionHit.transform.gameObject.tag != "Player")
+                    {
+                        Debug.Log("Collision Object Detected!");
+                        state = State.STATIONARY;
+                        transform.Translate(Vector2.up * forwardCollisionHit.distance);
+                    }
+                }
+                Debug.DrawRay(probeOrigin.transform.position, transform.up * probeDistance, Color.yellow, 1 * Time.deltaTime, false);
                 break;
         }
     }
@@ -83,77 +105,70 @@ public class PlayerMovement : MonoBehaviour {
     {
         if(colObj.gameObject.CompareTag("CollisionObject"))
         {
-            state = State.STATIONARY;
-            
-            //Send raycast
-            //RaycastHit2D[] rayHits = Physics2D.RaycastAll(transform.position, transform.up, 2.3f);
-            RaycastHit2D[] rayHits = Physics2D.CircleCastAll(transform.position, 0.1f, transform.up, 2.3f);
-            RaycastHit2D rayHit = rayHits.Length > 1 ? rayHits[1] : rayHits[0];
-            //float closestDistance = int.MaxValue;
-           /* RaycastHit2D closestHit = rayHits[0];
-            Debug.Log("Size of rayHits: " + rayHits.Length);
-            */
-            //Get closest hit
-            /*foreach(RaycastHit2D rayHit in rayHits)
-            {
-                Debug.Log("Checking rayHit: " + rayHit.transform.gameObject.name);
-                Debug.Log("rayHit.distance = " + rayHit.distance);
-                Debug.Log("Closest Distance = " + closestDistance);
-                Debug.Log("Collider Tag = " + rayHit.collider.gameObject.tag);
-                Debug.Log("Collision Point = " + rayHit.point);
-                if(rayHit.collider.gameObject.CompareTag("CollisionObject") && (closestDistance > rayHit.distance))
-                {
-                    closestHit = rayHit;
-                    closestDistance = rayHit.distance;
-                    Debug.Log("New Closest Hit: " + closestHit.transform.gameObject.name);
-                }
-                Debug.Log("\n");
-            }
-            Debug.Log("Final Closest Hit: " + closestHit.transform.gameObject.name);
-            */
-
-            //Check that plane is close to plater
-            /*Debug.Log(Time.time + " - Distance: " + closestHit.distance);
-            Debug.Log(Time.time + " - Normal: " + closestHit.normal);
-            transform.rotation = Quaternion.FromToRotation(Vector3.up, closestHit.normal);
-            transform.position = closestHit.point;
-            transform.Translate(Vector2.up * 1.4f);*/
-            Debug.Log("\nNEW HIT!");
-            Debug.Log(Time.time + " - Checking rayHit: " + rayHit.transform.gameObject.name);
-            Debug.Log(Time.time + " - rayHit.distance = " + rayHit.distance);
-            Debug.Log(Time.time + " - Collider Tag = " + rayHit.collider.gameObject.tag);
-            Debug.Log(Time.time + " - Collision Point = " + rayHit.point);
-            Debug.Log(Time.time + " - Normal: " + rayHit.normal);
-            Debug.Log(Time.time + " - Normal (Angle): " + Quaternion.FromToRotation(Vector3.up, rayHit.normal));
-            Debug.Log(Time.time + " - Distance: " + rayHit.distance);
-            if(rayHit.distance > 0)
-            {
-                Debug.Log("GOOD COLLISION!");
-            }
-            else
-            {
-                Debug.Log("BAD COLLISION!");
-            }
-            
-            transform.rotation = Quaternion.FromToRotation(Vector3.up, rayHit.normal);
-
-            RaycastHit2D[] backHits = Physics2D.RaycastAll(transform.position, -transform.up, 2f);
-            RaycastHit2D closestBackHit = backHits[0];
-            float closestBackDistance = int.MaxValue;
-            foreach (RaycastHit2D backHit in backHits)
-            {
-                if (backHit.collider.gameObject.CompareTag("CollisionObject") && (closestBackDistance > backHit.distance))
-                {
-                    closestBackHit = backHit;
-                }
-            }
-
-            Debug.Log("Player Length / 2: " + playerLength / 2 + " || Closest Distance: " + closestBackHit.distance + " || Name: " + closestBackHit.transform.gameObject.name);
-            float moveDistance = (playerLength / 2) - closestBackHit.distance;
-            Debug.Log("Move: " + moveDistance);
-            Debug.Log(transform.forward * moveDistance);
-            //transform.Translate(Vector2.up * moveDistance);
+            StopCharacterMovement();
         }
+    }
+
+    void StopCharacterMovement()
+    {
+        //Set state
+        state = State.STATIONARY;
+
+        //Get collision point
+        RaycastHit2D[] rayHits = Physics2D.CircleCastAll(transform.position, 0.1f, transform.up, 2.3f);
+        RaycastHit2D rayHit = rayHits.Length > 1 ? rayHits[1] : rayHits[0];
+
+        //Debug to check if the collision is good or bad
+        if (rayHit.distance > 0)
+        {
+            Debug.Log("GOOD COLLISION!");
+        }
+        else
+        {
+            Debug.Log("BAD COLLISION!");
+        }
+
+        Debug.Log("\n\n");
+
+        //Set rotation
+        transform.rotation = Quaternion.FromToRotation(Vector3.up, rayHit.normal);
+
+        //Set position
+        RaycastHit2D closestBackHit = GetClosestRaycastHit2D("CollisionObject", transform.position, -transform.up, 2f);
+        float moveDistance = (playerLength / 2) - closestBackHit.distance;
+        transform.Translate(Vector2.up * moveDistance);
+    }
+
+    //Gets closest Raycast2D
+    RaycastHit2D GetClosestRaycastHit2D(string compareTag, Vector2 origin, Vector2 direction, float distance = Mathf.Infinity, int layerMask = Physics2D.DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity)
+    {
+        RaycastHit2D[] hits = Physics2D.RaycastAll(origin, direction, distance, layerMask, minDepth, maxDepth);
+
+        if(hits.Length > 0)
+        {
+            RaycastHit2D closestHit = hits[0];
+            float closestBackDistance = int.MaxValue;
+
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (compareTag != null)
+                {
+                    if (hit.collider.gameObject.CompareTag(compareTag) && (closestBackDistance > hit.distance))
+                    {
+                        closestHit = hit;
+                    }
+                }
+                else
+                {
+                    if (closestBackDistance > hit.distance)
+                    {
+                        closestHit = hit;
+                    }
+                }
+            }
+            return closestHit;
+        }
+        return new RaycastHit2D();
     }
 
     //Updates the line renderer
