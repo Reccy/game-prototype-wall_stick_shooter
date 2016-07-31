@@ -10,8 +10,10 @@ public class PlayerMovement : MonoBehaviour {
     bool canJump; //If the player is able to jump
     float mouseAngle; //Angle between player and mouse
     public GameObject probe, probeOrigin; //Probe to check forward collisions
+    public GameObject audioManager; //Audio manager
     public float playerLength, playerWidth; //Player dimensions
     public float playerSpeed = 150f; //Player's speed
+    ParticleSystem particleSys; //Particle system
 
     enum State {STATIONARY, MOVING};
     State state;
@@ -22,6 +24,7 @@ public class PlayerMovement : MonoBehaviour {
         canJump = false;
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         lineRenderer = GetComponent<LineRenderer>();
+        particleSys = transform.Find("ParticleSystem").GetComponent<ParticleSystem>();
         state = State.STATIONARY;
     }
 
@@ -43,7 +46,6 @@ public class PlayerMovement : MonoBehaviour {
         mouseAngle = Vector2.Angle(mousePosition - (Vector2)transform.position, -transform.up);
         RaycastHit2D canJumpHit = GetClosestRaycastHit2D("CollisionObject", transform.position, mousePosition - (Vector2)transform.position, 2 * playerLength);
         canJump = canJumpHit.transform.gameObject.CompareTag("Player") ? true : false;
-        Debug.Log("Angle: " + mouseAngle + ", Distance: " + canJumpHit.distance + ", Name: " + canJumpHit.transform.gameObject.name);
     }
     
     void ManageMovement()
@@ -80,6 +82,9 @@ public class PlayerMovement : MonoBehaviour {
                     {
                         state = State.STATIONARY;
                         transform.Translate(Vector2.up * forwardCollisionHit.distance);
+                        particleSys.Play();
+                        cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
+                        audioManager.GetComponent<AudioManager>().PlayOneShot("ScreenShake", 0.5f);
                     }
                 }
                 break;
@@ -102,6 +107,7 @@ public class PlayerMovement : MonoBehaviour {
                         state = State.MOVING;
                         //Get angle
                         transform.eulerAngles = transform.eulerAngles.x < mousePosition.x - transform.position.x ? new Vector3(0, 0, 360 - Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up)) : new Vector3(0, 0, Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up));
+                        audioManager.GetComponent<AudioManager>().PlayOneShot("JumpSound", 0.2f);
                     }
                     else
                     {
