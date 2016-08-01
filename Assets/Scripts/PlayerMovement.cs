@@ -10,13 +10,18 @@ public class PlayerMovement : MonoBehaviour {
     bool canJump; //If the player is able to jump
     float mouseAngle; //Angle between player and mouse
     public GameObject probe, probeOrigin; //Probe to check forward collisions
-    public GameObject audioManager; //Audio manager
+    private GameObject audioManager; //Audio manager
     public float playerLength, playerWidth; //Player dimensions
     public float playerSpeed = 150f; //Player's speed
     ParticleSystem particleSys; //Particle system
 
-    enum State {STATIONARY, MOVING};
-    State state;
+    public enum State {STATIONARY, MOVING};
+    public State state;
+
+    void Awake()
+    {
+        state = State.STATIONARY;
+    }
 
     void Start()
     {
@@ -25,7 +30,7 @@ public class PlayerMovement : MonoBehaviour {
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         lineRenderer = GetComponent<LineRenderer>();
         particleSys = transform.Find("ParticleSystem").GetComponent<ParticleSystem>();
-        state = State.STATIONARY;
+        audioManager = GameObject.FindGameObjectWithTag("AudioManager");
     }
 
     void Update()
