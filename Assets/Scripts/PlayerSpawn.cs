@@ -12,10 +12,15 @@ public class PlayerSpawn : MonoBehaviour {
     {
         particleSystemIn = transform.Find("IntroEffects").GetComponent<ParticleSystem>();
         particleSystemOut = transform.Find("EndEffects").GetComponent<ParticleSystem>();
-        StartCoroutine(SpawnPlayer());
+        StartCoroutine(SpawnPlayerRoutine());
     }
 
-    IEnumerator SpawnPlayer()
+    public void SpawnPlayer()
+    {
+        StartCoroutine(SpawnPlayerRoutine());
+    }
+
+    IEnumerator SpawnPlayerRoutine()
     {
         particleSystemIn.Play();
         yield return new WaitForSeconds(1);

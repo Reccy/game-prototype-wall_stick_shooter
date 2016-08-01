@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour {
     public float playerLength, playerWidth; //Player dimensions
     public float playerSpeed = 150f; //Player's speed
     ParticleSystem particleSys; //Particle system
+    public GameObject soul; //Player's soul (spooky!)
 
     public enum State {STATIONARY, MOVING};
     public State state;
@@ -99,6 +100,11 @@ public class PlayerMovement : MonoBehaviour {
     //Manages player input
     void ManageInput()
     {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Die();
+        }
+
         switch (state)
         {
             case State.STATIONARY:
@@ -156,6 +162,13 @@ public class PlayerMovement : MonoBehaviour {
         RaycastHit2D closestBackHit = GetClosestRaycastHit2D("CollisionObject", transform.position, -transform.up, 2f);
         float moveDistance = (playerLength / 2) - closestBackHit.distance;
         transform.Translate(Vector2.up * moveDistance);
+    }
+
+    //The player dies
+    public void Die()
+    {
+        Instantiate(soul, transform.position, Quaternion.identity);
+        Destroy(gameObject);
     }
 
     //Sorts Raycast2D array to get closest Raycast2D
