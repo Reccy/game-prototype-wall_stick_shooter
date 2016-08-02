@@ -2,20 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerMovement : MonoBehaviour {
+public class EnemyMovement : MonoBehaviour {
 
-    Camera cam; //Scene camera
-    LineRenderer lineRenderer; //Line renderer
-    Vector2 mousePosition; //Mouse position (world space)
     bool canJump; //If the player is able to jump
     public GameObject probe, probeOrigin; //Probe to check forward collisions
     private GameObject audioManager; //Audio manager
     public float playerLength, playerWidth; //Player dimensions
     public float playerSpeed = 150f; //Player's speed
+    public List<GameObject> jumpVectors; //Jump positions
+    private int jumpVectorIndex; //Current index
+    public float jumpDelay = 0; //Delay per jump
+    private bool jumpIsRunning = false; //Is jump running?
     ParticleSystem particleSys; //Particle system
-    public GameObject soul; //Player's soul (spooky!)
 
-    public enum State {STATIONARY, MOVING};
+    public enum State { STATIONARY, MOVING };
     public State state;
 
     void Awake()
@@ -26,17 +26,14 @@ public class PlayerMovement : MonoBehaviour {
     void Start()
     {
         //Gets object references
+        StartCoroutine("Jump");
         canJump = false;
-        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        lineRenderer = GetComponent<LineRenderer>();
         particleSys = transform.Find("ParticleSystem").GetComponent<ParticleSystem>();
         audioManager = GameObject.FindGameObjectWithTag("AudioManager");
     }
 
     void Update()
     {
-        UpdateMousePosition();
-        UpdateLineRenderer();
         ManageInput();
     }
 
@@ -45,26 +42,16 @@ public class PlayerMovement : MonoBehaviour {
         ManageMovement();
     }
 
-    void UpdateMousePosition()
-    {
-        mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D canJumpHit = GetClosestRaycastHit2D("CollisionObject", transform.position, mousePosition - (Vector2)transform.position, 2 * playerLength);
-        canJump = canJumpHit.transform.gameObject.CompareTag("Player") ? true : false;
-    }
-    
     void ManageMovement()
     {
         switch (state)
         {
             case State.STATIONARY:
-                //Re-enables line renderer
-                if (!lineRenderer.enabled)
-                    EnableLineRenderer();
+                //Do nothing
                 break;
             case State.MOVING:
-                //Disabled line renderer
-                if (lineRenderer.enabled)
-                    DisableLineRenderer();
+                //Stop jumping
+                canJump = false;
 
                 //Move forward
                 transform.Translate(Vector2.up * playerSpeed * Time.deltaTime);
@@ -80,64 +67,60 @@ public class PlayerMovement : MonoBehaviour {
                 RaycastHit2D forwardCollisionHit = GetClosestRaycastHit2D("CollisionObject", probeOrigin.transform.position, transform.up, probeDistance);
 
                 //If player collides with object, correct their position
-                if(forwardCollisionHit)
+                if (forwardCollisionHit)
                 {
-                    if (forwardCollisionHit.transform.gameObject.tag != "Player" && forwardCollisionHit.transform.gameObject.tag != "EnemyObject")
+                    if (forwardCollisionHit.transform.gameObject.tag != "JumpingEnemy")
                     {
                         state = State.STATIONARY;
                         transform.Translate(Vector2.up * forwardCollisionHit.distance);
                         particleSys.Play();
-                        cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
-                        audioManager.GetComponent<AudioManager>().PlayOneShot("ScreenShake", 0.5f);
+                        audioManager.GetComponent<AudioManager>().PlayOneShot("EnemyLand", 0.05f);
                     }
-                }
-                break;
-        }
-    }
-    
-    //Manages player input
-    void ManageInput()
-    {
-        switch (state)
-        {
-            case State.STATIONARY:
-                //Left click - Jump
-                if (Input.GetMouseButtonDown(0))
-                {
-                    //If jump angle is okay
-                    if(canJump)
-                    {
-                        //Update state
-                        state = State.MOVING;
-                        //Get angle
-                        transform.eulerAngles = transform.eulerAngles.x < mousePosition.x - transform.position.x ? new Vector3(0, 0, 360 - Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up)) : new Vector3(0, 0, Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up));
-                        audioManager.GetComponent<AudioManager>().PlayOneShot("JumpSound", 0.2f);
-                    }
-                    else
-                    {
-                        Debug.Log("Movement Error: Mouse angle less than 80 degrees!");
-                    }
-                }
-                break;
-            case State.MOVING:
-                if (Input.GetMouseButtonDown(0))
-                {
-                    //Update state
-                    state = State.STATIONARY;
                 }
                 break;
         }
     }
 
+    //Manages player input
+    void ManageInput()
+    {
+        Debug.Log("Can jump? - " + canJump);
+        switch (state)
+        {
+            case State.STATIONARY:
+                //If enemy can jump
+                if (canJump)
+                {
+                    StartCoroutine("Jump");
+                }
+                break;
+            case State.MOVING:
+                //Do nothing
+                break;
+        }
+    }
+
+    IEnumerator Jump()
+    {
+        canJump = false;
+        //Wait a few seconds
+        yield return new WaitForSeconds(jumpDelay);
+
+        //Update state
+        state = State.MOVING;
+        //Get angle
+        transform.eulerAngles = transform.eulerAngles.x < jumpVectors[jumpVectorIndex].transform.position.x - transform.position.x ? new Vector3(0, 0, 360 - Vector2.Angle((Vector2)jumpVectors[jumpVectorIndex].transform.position - (Vector2)transform.position, Vector2.up)) : new Vector3(0, 0, Vector2.Angle((Vector2)jumpVectors[jumpVectorIndex].transform.position - (Vector2)transform.position, Vector2.up));
+        audioManager.GetComponent<AudioManager>().PlayOneShot("EnemyJump", 0.2f);
+
+        //Update jump vector index
+        jumpVectorIndex = jumpVectorIndex >= (jumpVectors.Count - 1) ? 0 : jumpVectorIndex + 1;
+    }
+
     void OnTriggerEnter2D(Collider2D colObj)
     {
-        if(colObj.gameObject.CompareTag("CollisionObject"))
+        if (colObj.gameObject.CompareTag("CollisionObject"))
         {
             StopCharacterMovement();
-        }
-        else if(colObj.gameObject.CompareTag("EnemyObject") || colObj.gameObject.CompareTag("JumpingEnemy"))
-        {
-            Die();
         }
     }
 
@@ -159,15 +142,9 @@ public class PlayerMovement : MonoBehaviour {
         RaycastHit2D closestBackHit = GetClosestRaycastHit2D("CollisionObject", transform.position, -transform.up, 2f);
         float moveDistance = (playerLength / 2) - closestBackHit.distance;
         transform.Translate(Vector2.up * moveDistance);
-    }
 
-    //The player dies
-    public void Die()
-    {
-        cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
-        audioManager.GetComponent<AudioManager>().PlayOneShot("DeathSound", 0.8f);
-        Instantiate(soul, transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        //Character can jump again
+        canJump = true;
     }
 
     //Sorts Raycast2D array to get closest Raycast2D
@@ -206,16 +183,16 @@ public class PlayerMovement : MonoBehaviour {
     {
         List<RaycastHit2D> rayHitsList = new List<RaycastHit2D>();
 
-        for(int i = 0; i < segments; i++)
+        for (int i = 0; i < segments; i++)
         {
             float angle = (360 / segments) * i;
             Vector2 dir = Quaternion.Euler(0, 0, angle) * Vector2.up;
             RaycastHit2D rayHit = GetClosestRaycastHit2D(compareTag, origin, dir, radius);
-            if(rayHit.transform.gameObject.CompareTag(compareTag))
+            if (rayHit.transform.gameObject.CompareTag(compareTag))
             {
                 rayHitsList.Add(rayHit);
             }
-            
+
             //Pretty Rainbow Debug Method! :D
             /*
             if(i == 0)
@@ -238,40 +215,5 @@ public class PlayerMovement : MonoBehaviour {
     {
         RaycastHit2D[] hits = Physics2D.RaycastAll(origin, direction, distance, layerMask, minDepth, maxDepth);
         return SortRaycastHit2D(compareTag, hits);
-    }
-
-    //Updates the line renderer
-    void UpdateLineRenderer()
-    {
-        Color c1;
-        Color c2;
-
-        if (canJump)
-        {
-            //Able to jump
-            c1 = Color.blue;
-            c2 = Color.blue;
-        }
-        else
-        {
-            //Unable to jump
-            c1 = Color.red;
-            c2 = Color.red;
-        }
-
-        lineRenderer.SetColors(c1, c2);
-        lineRenderer.SetPositions(new Vector3[] {transform.position, mousePosition});
-    }
-
-    //Disables the line renderer
-    void DisableLineRenderer()
-    {
-        lineRenderer.enabled = false;
-    }
-
-    //Enables the line renderer
-    void EnableLineRenderer()
-    {
-        lineRenderer.enabled = true;
     }
 }

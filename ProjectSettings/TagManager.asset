@@ -8,6 +8,7 @@ TagManager:
   - AudioManager
   - PlayerSpawn
   - EnemyObject
+  - JumpingEnemy
   layers:
   - Default
   - TransparentFX
