@@ -4,7 +4,7 @@ using System.Collections;
 public class Soul : MonoBehaviour {
 
     private GameObject spawnPoint;
-    float speed, ang;
+    float speed;
     private bool spawned;
 
 	void Start () {
@@ -14,7 +14,6 @@ public class Soul : MonoBehaviour {
 
 	void Update () {
         //Get rotation
-        ang = Vector2.Angle(spawnPoint.transform.position - transform.position, Vector2.up);
         transform.eulerAngles = transform.eulerAngles.x < spawnPoint.transform.position.x - transform.position.x ? new Vector3(0, 0, 360 - Vector2.Angle(spawnPoint.transform.position - transform.position, Vector2.up)) : new Vector3(0, 0, Vector2.Angle(spawnPoint.transform.position - transform.position, Vector2.up));
 
         //Get speed

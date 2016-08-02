@@ -84,7 +84,7 @@ public class PlayerMovement : MonoBehaviour {
                 //If player collides with object, correct their position
                 if(forwardCollisionHit)
                 {
-                    if (forwardCollisionHit.transform.gameObject.tag != "Player")
+                    if (forwardCollisionHit.transform.gameObject.tag != "Player" && forwardCollisionHit.transform.gameObject.tag != "EnemyObject")
                     {
                         state = State.STATIONARY;
                         transform.Translate(Vector2.up * forwardCollisionHit.distance);
@@ -142,6 +142,10 @@ public class PlayerMovement : MonoBehaviour {
         {
             StopCharacterMovement();
         }
+        else if(colObj.gameObject.CompareTag("EnemyObject"))
+        {
+            Die();
+        }
     }
 
     void StopCharacterMovement()
@@ -167,6 +171,8 @@ public class PlayerMovement : MonoBehaviour {
     //The player dies
     public void Die()
     {
+        cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
+        audioManager.GetComponent<AudioManager>().PlayOneShot("DeathSound", 0.8f);
         Instantiate(soul, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }

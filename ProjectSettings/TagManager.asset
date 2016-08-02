@@ -6,6 +6,8 @@ TagManager:
   tags:
   - CollisionObject
   - AudioManager
+  - PlayerSpawn
+  - EnemyObject
   layers:
   - Default
   - TransparentFX
