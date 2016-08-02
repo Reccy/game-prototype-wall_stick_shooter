@@ -12,7 +12,6 @@ public class EnemyMovement : MonoBehaviour {
     public List<GameObject> jumpVectors; //Jump positions
     private int jumpVectorIndex; //Current index
     public float jumpDelay = 0; //Delay per jump
-    private bool jumpIsRunning = false; //Is jump running?
     ParticleSystem particleSys; //Particle system
 
     public enum State { STATIONARY, MOVING };
@@ -69,7 +68,7 @@ public class EnemyMovement : MonoBehaviour {
                 //If player collides with object, correct their position
                 if (forwardCollisionHit)
                 {
-                    if (forwardCollisionHit.transform.gameObject.tag != "JumpingEnemy")
+                    if (forwardCollisionHit.transform.gameObject.CompareTag("CollisionObject"))
                     {
                         state = State.STATIONARY;
                         transform.Translate(Vector2.up * forwardCollisionHit.distance);
@@ -84,7 +83,6 @@ public class EnemyMovement : MonoBehaviour {
     //Manages player input
     void ManageInput()
     {
-        Debug.Log("Can jump? - " + canJump);
         switch (state)
         {
             case State.STATIONARY:

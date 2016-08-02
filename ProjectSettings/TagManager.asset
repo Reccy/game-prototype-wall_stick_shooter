@@ -9,6 +9,8 @@ TagManager:
   - PlayerSpawn
   - EnemyObject
   - JumpingEnemy
+  - CameraNodes
+  - CameraNode
   layers:
   - Default
   - TransparentFX

@@ -49,7 +49,14 @@ public class PlayerMovement : MonoBehaviour {
     {
         mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D canJumpHit = GetClosestRaycastHit2D("CollisionObject", transform.position, mousePosition - (Vector2)transform.position, 2 * playerLength);
-        canJump = canJumpHit.transform.gameObject.CompareTag("Player") ? true : false;
+        if (canJumpHit.transform.gameObject.CompareTag("Player") || canJumpHit.transform.gameObject.CompareTag("CameraNode"))
+        {
+            canJump = true;
+        }
+        else
+        {
+            canJump = false;
+        }
     }
     
     void ManageMovement()
@@ -82,7 +89,7 @@ public class PlayerMovement : MonoBehaviour {
                 //If player collides with object, correct their position
                 if(forwardCollisionHit)
                 {
-                    if (forwardCollisionHit.transform.gameObject.tag != "Player" && forwardCollisionHit.transform.gameObject.tag != "EnemyObject")
+                    if (forwardCollisionHit.transform.gameObject.CompareTag("CollisionObject"))
                     {
                         state = State.STATIONARY;
                         transform.Translate(Vector2.up * forwardCollisionHit.distance);
@@ -120,11 +127,7 @@ public class PlayerMovement : MonoBehaviour {
                 }
                 break;
             case State.MOVING:
-                if (Input.GetMouseButtonDown(0))
-                {
-                    //Update state
-                    state = State.STATIONARY;
-                }
+                //Do nothing -_-
                 break;
         }
     }
@@ -145,20 +148,23 @@ public class PlayerMovement : MonoBehaviour {
     {
         //Get collision point
         RaycastHit2D rayHit = RaycastCircle("CollisionObject", transform.position, 360, 2f);
+        if(rayHit.transform.gameObject.CompareTag("CollisionObject"))
+        {
+            //Set state
+            state = State.STATIONARY;
 
-        //Set state
-        state = State.STATIONARY;
+            //Set first position to line up planes
+            transform.position = rayHit.point;
 
-        //Set first position to line up planes
-        transform.position = rayHit.point;
+            //Set rotation
+            transform.rotation = Quaternion.FromToRotation(Vector3.up, rayHit.normal);
 
-        //Set rotation
-        transform.rotation = Quaternion.FromToRotation(Vector3.up, rayHit.normal);
-
-        //Set final position
-        RaycastHit2D closestBackHit = GetClosestRaycastHit2D("CollisionObject", transform.position, -transform.up, 2f);
-        float moveDistance = (playerLength / 2) - closestBackHit.distance;
-        transform.Translate(Vector2.up * moveDistance);
+            //Set final position
+            RaycastHit2D closestBackHit = GetClosestRaycastHit2D("CollisionObject", transform.position, -transform.up, 2f);
+            float moveDistance = (playerLength / 2) - closestBackHit.distance;
+            transform.Translate(Vector2.up * moveDistance);
+        }
+        
     }
 
     //The player dies

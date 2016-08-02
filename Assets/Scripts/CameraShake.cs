@@ -27,9 +27,11 @@ public class CameraShake : MonoBehaviour
         {
             camTransform = GetComponent(typeof(Transform)) as Transform;
         }
+
+        UpdatePos();
     }
 
-    void OnEnable()
+    public void UpdatePos()
     {
         originalPos = camTransform.localPosition;
     }
