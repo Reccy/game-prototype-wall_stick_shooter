@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 417626}
   - 114: {fileID: 11419590}
   - 61: {fileID: 6139444}
+  - 20: {fileID: 2098130}
   m_Layer: 0
   m_Name: CameraNode
   m_TagString: CameraNode
@@ -24,12 +25,46 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 194252}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!20 &2098130
+Camera:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 194252}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.17254902, g: 0, b: 0.10196079, a: 0.019607844}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 1
+  orthographic size: 40
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+  m_StereoMirrorMode: 0
 --- !u!61 &6139444
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -43,7 +78,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 128.9, y: 80.2}
 --- !u!114 &11419590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -55,7 +90,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edffd621a15b6264b83d4177edc368b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Zoom: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

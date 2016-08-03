@@ -10,6 +10,7 @@ public class Soul : MonoBehaviour {
 	void Start () {
         spawned = false;
         spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawn");
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<OnRailsCamera>().SetSoul(gameObject);
     }
 
 	void Update () {

@@ -105,6 +105,12 @@ public class PlayerMovement : MonoBehaviour {
     //Manages player input
     void ManageInput()
     {
+        //DEBUG
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Die();
+        }
+
         switch (state)
         {
             case State.STATIONARY:

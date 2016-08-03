@@ -11,6 +11,7 @@ TagManager:
   - JumpingEnemy
   - CameraNodes
   - CameraNode
+  - PlayerSoul
   layers:
   - Default
   - TransparentFX
