@@ -12,6 +12,7 @@ TagManager:
   - CameraNodes
   - CameraNode
   - PlayerSoul
+  - LevelEnd
   layers:
   - Default
   - TransparentFX

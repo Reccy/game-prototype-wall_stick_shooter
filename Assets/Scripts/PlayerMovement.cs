@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -147,6 +148,10 @@ public class PlayerMovement : MonoBehaviour {
         else if(colObj.gameObject.CompareTag("EnemyObject") || colObj.gameObject.CompareTag("JumpingEnemy"))
         {
             Die();
+        }
+        else if(colObj.gameObject.CompareTag("LevelEnd"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 

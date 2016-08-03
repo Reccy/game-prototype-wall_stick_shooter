@@ -9,7 +9,5 @@ public class EditorLagFix : MonoBehaviour {
         {
             QualitySettings.antiAliasing = 0;
         }
-        
-        Debug.Log("Current AA: " + QualitySettings.antiAliasing);
 	}
 }

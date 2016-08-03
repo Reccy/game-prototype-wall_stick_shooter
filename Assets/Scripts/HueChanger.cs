@@ -3,6 +3,7 @@ using System.Collections;
 
 public class HueChanger : MonoBehaviour {
 
+    public float speed = 1f;
     GameObject targetObject;
     SpriteRenderer spriteRenderer;
     int colorHue;
@@ -22,7 +23,7 @@ public class HueChanger : MonoBehaviour {
     }
 
 	void Update(){
-        colorHue++;
+        colorHue = colorHue + Mathf.FloorToInt(speed * 65f * Time.deltaTime);
         if(colorHue >= 360)
         {
             colorHue = 0;
