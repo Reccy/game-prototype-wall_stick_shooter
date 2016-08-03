@@ -4,6 +4,7 @@ using System.Collections;
 public class CameraNode : MonoBehaviour {
 
     private Camera thisCam;
+    public bool originalNode = false;
     private bool containsSpawn = false;
     private bool mainCamLock = false;
 

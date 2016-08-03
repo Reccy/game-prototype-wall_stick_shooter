@@ -274,6 +274,10 @@ Prefab:
       propertyPath: orthographic size
       value: 48.18
       objectReference: {fileID: 0}
+    - target: {fileID: 2098130, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
+      propertyPath: m_Depth
+      value: -2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
   m_IsPrefabParent: 0
@@ -293,7 +297,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &132038725
 MonoBehaviour:
@@ -466,6 +470,10 @@ Prefab:
       propertyPath: m_Offset.x
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2098130, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
+      propertyPath: m_Depth
+      value: -2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
   m_IsPrefabParent: 0
@@ -513,7 +521,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!61 &248498226
 BoxCollider2D:
@@ -599,7 +607,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!61 &262000485
 BoxCollider2D:
@@ -785,7 +793,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &306869641
 MonoBehaviour:
@@ -1037,6 +1045,10 @@ Prefab:
       propertyPath: m_Offset.x
       value: -7.1
       objectReference: {fileID: 0}
+    - target: {fileID: 2098130, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
+      propertyPath: m_Depth
+      value: -2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
   m_IsPrefabParent: 0
@@ -1056,6 +1068,7 @@ GameObject:
   - 114: {fileID: 487489658}
   - 61: {fileID: 487489660}
   - 50: {fileID: 487489659}
+  - 114: {fileID: 487489661}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -1157,7 +1170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca243325ab3f7644393fdc8521553dc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxOffset: 5
+  maxOffset: 3
   playerSoul: {fileID: 0}
   lerpSpeed: 10
 --- !u!50 &487489659
@@ -1191,6 +1204,17 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
+--- !u!114 &487489661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 487489651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39c835dc797bf1043b698d6ae0b92b00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &490804863
 GameObject:
   m_ObjectHideFlags: 0
@@ -1207,7 +1231,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &490804864
 MonoBehaviour:
@@ -1316,10 +1340,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 11419590, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
-      propertyPath: containsCheckpoint
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
   m_IsPrefabParent: 0
@@ -1398,6 +1418,10 @@ Prefab:
       propertyPath: m_Offset.y
       value: -52.99
       objectReference: {fileID: 0}
+    - target: {fileID: 2098130, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
+      propertyPath: m_Depth
+      value: -2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5c239e7173bba69488a433a8ef9e9bf9, type: 2}
   m_IsPrefabParent: 0
@@ -1417,7 +1441,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &562010214
 MonoBehaviour:
@@ -1503,7 +1527,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &693288024
 MonoBehaviour:
@@ -1659,7 +1683,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &735551051
 MonoBehaviour:
@@ -1745,7 +1769,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &740034129
 MonoBehaviour:
@@ -1831,7 +1855,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &796336415
 MonoBehaviour:
@@ -1917,7 +1941,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &797295364
 MonoBehaviour:
@@ -2003,7 +2027,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!61 &903926236
 BoxCollider2D:
@@ -2089,7 +2113,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &922838326
 MonoBehaviour:
@@ -2175,7 +2199,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &933040938
 MonoBehaviour:
@@ -2436,6 +2460,10 @@ Prefab:
       propertyPath: m_LocalScale.y
       value: 19.499872
       objectReference: {fileID: 0}
+    - target: {fileID: 141438, guid: d200fa233938b0349803a952ab7f5beb, type: 2}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d200fa233938b0349803a952ab7f5beb, type: 2}
   m_IsPrefabParent: 0
@@ -2455,7 +2483,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1181038750
 MonoBehaviour:
@@ -2541,7 +2569,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1260069500
 MonoBehaviour:
@@ -2690,7 +2718,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1553015114
 MonoBehaviour:
@@ -2776,7 +2804,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1662358955
 MonoBehaviour:
@@ -2862,7 +2890,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!61 &1732038132
 BoxCollider2D:
@@ -2948,7 +2976,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!61 &1738828386
 BoxCollider2D:
@@ -3186,7 +3214,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1794902288
 MonoBehaviour:
@@ -3272,7 +3300,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1987784430
 MonoBehaviour:
@@ -3362,7 +3390,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &2097415821
 MonoBehaviour:
@@ -3448,7 +3476,7 @@ GameObject:
   m_TagString: CollisionObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &2119458416
 MonoBehaviour:

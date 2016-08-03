@@ -25,14 +25,21 @@ public class OnRailsCamera : MonoBehaviour {
     {
         camNodes = GameObject.FindGameObjectWithTag("CameraNodes").GetComponentsInChildren<CameraNode>();
 
-        //Set camera initial positions
-        newTransform = camNodes[0].transform.position;
-        newRotation = camNodes[0].transform.rotation;
-        newZoom = camNodes[0].GetComponent<Camera>().orthographicSize;
-        
-        transform.position = newTransform;
-        transform.rotation = newRotation;
-        GetComponent<Camera>().orthographicSize = newZoom;
+        for (int i = 0; i < camNodes.Length; i++ )
+        {
+            if(camNodes[i].originalNode)
+            {
+                //Set camera initial positions
+                newTransform = camNodes[i].transform.position;
+                newRotation = camNodes[i].transform.rotation;
+                newZoom = camNodes[i].GetComponent<Camera>().orthographicSize;
+
+                transform.position = newTransform;
+                transform.rotation = newRotation;
+                GetComponent<Camera>().orthographicSize = newZoom;
+                break;
+            }
+        }
     }
 
     //Update lerp paramaters
@@ -76,7 +83,7 @@ public class OnRailsCamera : MonoBehaviour {
         else if(camMode == CameraMode.SOUL)
         {
             newTransform = new Vector3(playerSoul.transform.position.x, playerSoul.transform.position.y, transform.position.z);
-            newRotation = Quaternion.EulerAngles(0, 0, 0);
+            newRotation = Quaternion.Euler(0, 0, 0);
 
             transform.position = Vector3.Lerp(transform.position, newTransform, 10 * Time.deltaTime);
             transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, 10 * Time.deltaTime);
