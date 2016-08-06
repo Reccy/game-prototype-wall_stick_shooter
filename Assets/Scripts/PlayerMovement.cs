@@ -15,8 +15,9 @@ public class PlayerMovement : MonoBehaviour {
     public float playerSpeed = 150f; //Player's speed
     ParticleSystem particleSys; //Particle system
     public GameObject soul; //Player's soul (spooky!)
+    private bool jumpRedirected; //If player has used slo-mo ability
 
-    public enum State {STATIONARY, MOVING};
+    public enum State {STATIONARY, MOVING, JUMP_CHARGE};
     public State state;
 
     void Awake()
@@ -28,6 +29,7 @@ public class PlayerMovement : MonoBehaviour {
     {
         //Gets object references
         canJump = false;
+        jumpRedirected = false;
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         lineRenderer = GetComponent<LineRenderer>();
         particleSys = transform.Find("ParticleSystem").GetComponent<ParticleSystem>();
@@ -36,6 +38,7 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
+        Debug.Log(Time.timeScale);
         UpdateMousePosition();
         UpdateLineRenderer();
         ManageInput();
@@ -70,54 +73,58 @@ public class PlayerMovement : MonoBehaviour {
                     EnableLineRenderer();
                 break;
             case State.MOVING:
-                //Disabled line renderer
-                if (lineRenderer.enabled)
-                    DisableLineRenderer();
-
-                //Move forward
-                transform.Translate(Vector2.up * playerSpeed * Time.deltaTime);
-
-                //Moves probe forward
-                probe.transform.position = probeOrigin.transform.position;
-                probe.transform.Translate(Vector2.up * playerSpeed * Time.deltaTime);
-
-                //Distance between probes (Movement distance this frame)
-                float probeDistance = Mathf.Abs(Vector2.Distance(probeOrigin.transform.position, probe.transform.position));
-
-                //Check if player will collide with object
-                RaycastHit2D forwardCollisionHit = GetClosestRaycastHit2D("CollisionObject", probeOrigin.transform.position, transform.up, probeDistance);
-
-                //If player collides with object, correct their position
-                if(forwardCollisionHit)
-                {
-                    if (forwardCollisionHit.transform.gameObject.CompareTag("CollisionObject"))
-                    {
-                        state = State.STATIONARY;
-                        transform.Translate(Vector2.up * forwardCollisionHit.distance);
-                        particleSys.Play();
-                        cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
-                        audioManager.GetComponent<AudioManager>().PlayOneShot("ScreenShake", 0.5f);
-                    }
-                }
+                ResolveCollisions();
+                break;
+            case State.JUMP_CHARGE:
+                ResolveCollisions();
                 break;
         }
     }
     
+    //Resolved player collisions
+    void ResolveCollisions()
+    {
+        //Move forward
+        transform.Translate(Vector2.up * playerSpeed * Time.deltaTime);
+
+        //Moves probe forward
+        probe.transform.position = probeOrigin.transform.position;
+        probe.transform.Translate(Vector2.up * playerSpeed * Time.deltaTime);
+
+        //Distance between probes (Movement distance this frame)
+        float probeDistance = Mathf.Abs(Vector2.Distance(probeOrigin.transform.position, probe.transform.position));
+
+        //Check if player will collide with object
+        RaycastHit2D forwardCollisionHit = GetClosestRaycastHit2D("CollisionObject", probeOrigin.transform.position, transform.up, probeDistance);
+
+        //If player collides with object, correct their position
+        if (forwardCollisionHit)
+        {
+            if (forwardCollisionHit.transform.gameObject.CompareTag("CollisionObject"))
+            {
+                state = State.STATIONARY;
+                transform.Translate(Vector2.up * forwardCollisionHit.distance);
+                particleSys.Play();
+                cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
+                audioManager.GetComponent<AudioManager>().PlayOneShot("ScreenShake", 0.5f);
+            }
+        }
+    }
+
     //Manages player input
     void ManageInput()
     {
-        //DEBUG
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            Die();
-        }
-
         switch (state)
         {
             case State.STATIONARY:
+                Time.timeScale = 1;
+
                 //Left click - Jump
                 if (Input.GetMouseButtonDown(0))
                 {
+                    DisableLineRenderer();
+                    jumpRedirected = false;
+
                     //If jump angle is okay
                     if(canJump)
                     {
@@ -134,7 +141,35 @@ public class PlayerMovement : MonoBehaviour {
                 }
                 break;
             case State.MOVING:
-                //Do nothing -_-
+                if(Input.GetMouseButtonDown(0) && !jumpRedirected)
+                {
+                    state = State.JUMP_CHARGE;
+                }
+                break;
+            case State.JUMP_CHARGE:
+                if(Time.timeScale > 0.1f)
+                {
+                    Time.timeScale = Time.timeScale - 0.2f;
+                }
+                else
+                {
+                    Time.timeScale = 0.1f;
+                }
+
+                EnableLineRenderer();
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    Time.timeScale = 1;
+                    DisableLineRenderer();
+                    jumpRedirected = true;
+   
+                    //Get angle
+                    transform.eulerAngles = transform.eulerAngles.x < mousePosition.x - transform.position.x ? new Vector3(0, 0, 360 - Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up)) : new Vector3(0, 0, Vector2.Angle(mousePosition - (Vector2)transform.position, Vector2.up));
+                    audioManager.GetComponent<AudioManager>().PlayOneShot("JumpSound", 0.2f);
+
+                    state = State.MOVING;
+                }
                 break;
         }
     }
@@ -181,6 +216,7 @@ public class PlayerMovement : MonoBehaviour {
     //The player dies
     public void Die()
     {
+        Time.timeScale = 1;
         cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
         audioManager.GetComponent<AudioManager>().PlayOneShot("DeathSound", 0.8f);
         Instantiate(soul, transform.position, Quaternion.identity);
