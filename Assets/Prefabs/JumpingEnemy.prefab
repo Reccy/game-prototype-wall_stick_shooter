@@ -27,6 +27,7 @@ GameObject:
   - 114: {fileID: 11413182}
   - 61: {fileID: 6148980}
   - 50: {fileID: 5085652}
+  - 114: {fileID: 11443170}
   m_Layer: 0
   m_Name: JumpingEnemy
   m_TagString: JumpingEnemy
@@ -171,6 +172,18 @@ MonoBehaviour:
   jumpVectors: []
   jumpDelay: 1
   state: 0
+--- !u!114 &11443170
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 154604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 197b0dd4240a73041aa316d6db8fd809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isKillable: 1
 --- !u!198 &19885872
 ParticleSystem:
   m_ObjectHideFlags: 1

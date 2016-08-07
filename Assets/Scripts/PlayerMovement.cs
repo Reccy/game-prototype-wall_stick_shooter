@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
@@ -65,6 +66,12 @@ public class PlayerMovement : MonoBehaviour {
     
     void ManageMovement()
     {
+        //Debug!
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Die();
+        }
+
         switch (state)
         {
             case State.STATIONARY:
@@ -230,11 +237,25 @@ public class PlayerMovement : MonoBehaviour {
     //The player dies
     public void Die()
     {
-        Time.timeScale = 1;
-        cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
-        audioManager.GetComponent<AudioManager>().PlayOneShot("DeathSound", 0.8f);
-        Instantiate(soul, transform.position, Quaternion.identity);
-        Destroy(gameObject);
+        //If gamemode is platformer
+        if(GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().gameMode == GameManager.GameMode.PLATFORMER)
+        {
+            Time.timeScale = 1;
+            cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
+            audioManager.GetComponent<AudioManager>().PlayOneShot("DeathSound", 0.8f);
+            Instantiate(soul, transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
+        //If gamemode is bullet hell
+        else if (GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().gameMode == GameManager.GameMode.BULLET_HELL)
+        {
+            Time.timeScale = 1;
+            cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
+            audioManager.GetComponent<AudioManager>().PlayOneShot("DeathSound", 0.8f);
+            GameObject.FindGameObjectWithTag("UI").GetComponentInChildren<Text>().text = "GAME OVER!\nPress 'R' to restart!";
+            Destroy(gameObject);
+        }
+        
     }
 
     //Sorts Raycast2D array to get closest Raycast2D
