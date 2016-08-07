@@ -31,6 +31,11 @@ public class EnemyMovement : MonoBehaviour {
         audioManager = GameObject.FindGameObjectWithTag("AudioManager");
     }
 
+    public void Die()
+    {
+        Destroy(this.gameObject);
+    }
+
     void Update()
     {
         ManageInput();

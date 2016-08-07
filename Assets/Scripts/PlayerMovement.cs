@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour {
     ParticleSystem particleSys; //Particle system
     public GameObject soul; //Player's soul (spooky!)
     private bool jumpRedirected; //If player has used slo-mo ability
+    public GameObject blastObj; //Blast object
 
     public enum State {STATIONARY, MOVING, JUMP_CHARGE};
     public State state;
@@ -38,7 +39,6 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
-        Debug.Log(Time.timeScale);
         UpdateMousePosition();
         UpdateLineRenderer();
         ManageInput();
@@ -170,8 +170,22 @@ public class PlayerMovement : MonoBehaviour {
 
                     state = State.MOVING;
                 }
+                if (Input.GetMouseButtonDown(1))
+                {
+                    Time.timeScale = 1;
+                    DisableLineRenderer();
+                    jumpRedirected = true;
+
+                    ShootBlast();
+                    state = State.MOVING;
+                }
                 break;
         }
+    }
+
+    void ShootBlast()
+    {
+        Instantiate(blastObj, transform.position, Quaternion.identity);
     }
 
     void OnTriggerEnter2D(Collider2D colObj)

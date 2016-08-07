@@ -11,6 +11,18 @@ public class AudioManager : MonoBehaviour {
     {
         audioSource = GetComponent<AudioSource>();
     }
+    
+    void Update()
+    {
+        if(Time.timeScale == 1)
+        {
+            audioSource.pitch = 1;
+        }
+        else
+        {
+            audioSource.pitch = 0.8f;
+        }
+    }
 
     public void PlayOneShot(string name, float volume)
     {
