@@ -26,15 +26,12 @@ public class GameManager : MonoBehaviour {
 
     public void SpawnNewObstacle()
     {
-        Debug.Log("Spawning new Obstacle at " + Time.timeSinceLevelLoad);
         rand = Random.Range(0, obstacles.Count);
         Instantiate(obstacles[rand], transform.position, Quaternion.identity);
-        Debug.Log("Intantiating at index: " + rand);
     }
 
     public void SpawnNewBulletPattern()
     {
-        Debug.Log("Spawning new Bullet Pattern at " + Time.timeSinceLevelLoad);
         rand = Random.Range(0, bulletPatterns.Count - 1);
         Instantiate(bulletPatterns[rand], transform.position, Quaternion.identity);
     }

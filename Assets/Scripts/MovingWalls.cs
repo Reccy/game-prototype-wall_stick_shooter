@@ -31,7 +31,6 @@ public class MovingWalls : MonoBehaviour {
 	    if(begin)
         {
             transform.position = new Vector2(Mathf.Sin((Time.timeSinceLevelLoad - startTime) * speed) * intensity, transform.position.y);
-            Debug.Log("X pos: " + transform.position.x + " || " + Time.timeSinceLevelLoad);
         }
 	}
 }
