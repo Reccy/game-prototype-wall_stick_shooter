@@ -249,10 +249,10 @@ public class PlayerMovement : MonoBehaviour {
         //If gamemode is bullet hell
         else if (GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().gameMode == GameManager.GameMode.BULLET_HELL)
         {
-            Time.timeScale = 1;
+            Time.timeScale = 0;
             cam.GetComponent<CameraShake>().shakeDuration = 0.2f;
             audioManager.GetComponent<AudioManager>().PlayOneShot("DeathSound", 0.8f);
-            GameObject.FindGameObjectWithTag("UI").GetComponentInChildren<Text>().text = "GAME OVER!\nPress 'R' to restart!";
+            GameObject.FindGameObjectWithTag("UI").GetComponentInChildren<Text>().text = "GAME OVER!\nPress 'R' to restart!\nTime Survived: " + Time.time;
             Destroy(gameObject);
         }
         
