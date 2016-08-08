@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour {
 
     public void SpawnNewBulletPattern()
     {
-        rand = Random.Range(0, bulletPatterns.Count - 1);
+        rand = Random.Range(0, bulletPatterns.Count);
         Instantiate(bulletPatterns[rand], transform.position, Quaternion.identity);
     }
 

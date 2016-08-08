@@ -15,6 +15,7 @@ TagManager:
   - LevelEnd
   - GameManager
   - UI
+  - TargetManager
   layers:
   - Default
   - TransparentFX

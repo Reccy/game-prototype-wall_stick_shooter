@@ -21,11 +21,13 @@ public class FlyerManager : MonoBehaviour {
 	IEnumerator LaunchFlyers()
     {
         yield return new WaitForSeconds(3f);
+
         foreach (GameObject flyer in flyers)
         {
             flyer.GetComponent<Flyer>().begin = true;
             yield return new WaitForSeconds(0.5f);
         }
+
         yield return new WaitForSeconds(1.5f);
         GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().SpawnNewBulletPattern();
     }

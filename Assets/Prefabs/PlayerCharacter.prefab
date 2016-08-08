@@ -168,7 +168,7 @@ MonoBehaviour:
   probeOrigin: {fileID: 144382}
   playerLength: 2.83
   playerWidth: 1.42
-  playerSpeed: 150
+  playerSpeed: 170
   soul: {fileID: 176282, guid: 5abf51d77e4ae7e419b9f839b921c1dd, type: 2}
   blastObj: {fileID: 193338, guid: 98416e854a83dc94c9e258a383b0a0fe, type: 2}
   state: 0
